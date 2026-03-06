@@ -326,7 +326,7 @@
     "english": "I never give up, believe it!",
     "anime": "Naruto",
     "character": "Naruto Uzumaki",
-    "completed": false,
+    "completed": true,
     "issued": false
   },
   {
@@ -517,7 +517,7 @@
     "anime": "Dragon Ball Z",
     "character": "Son Goku",
     "completed": false,
-    "issued": false
+    "issued": true
   },
   {
     "id": 53,
