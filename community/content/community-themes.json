@@ -252,15 +252,21 @@
   "secondaryColor": "oklch(70.0% 0.090 210.0 / 1)"
 },
   {
-  id: 'wisteria-dream',
-  backgroundColor: 'oklch(20.0% 0.048 290.0 / 1)',
-  mainColor: 'oklch(72.0% 0.175 295.0 / 1)',
-  secondaryColor: 'oklch(80.0% 0.125 320.0 / 1)'
-},
+    "id": "wisteria-dream",
+    "backgroundColor": "oklch(20.0% 0.048 290.0 / 1)",
+    "mainColor": "oklch(72.0% 0.175 295.0 / 1)",
+    "secondaryColor": "oklch(80.0% 0.125 320.0 / 1)"
+  },
   {
-  id: 'dango-sweet',
-  backgroundColor: 'oklch(94.0% 0.020 95.0 / 1)',
-  mainColor: 'oklch(65.0% 0.180 350.0 / 1)',
-  secondaryColor: 'oklch(72.0% 0.145 130.0 / 1)'
-},
+    "id": "dango-sweet",
+    "backgroundColor": "oklch(94.0% 0.020 95.0 / 1)",
+    "mainColor": "oklch(65.0% 0.180 350.0 / 1)",
+    "secondaryColor": "oklch(72.0% 0.145 130.0 / 1)"
+  },
+  {
+    "id": "sumi-ink",
+    "backgroundColor": "oklch(14.0% 0.010 260.0 / 1)",
+    "mainColor": "oklch(90.0% 0.015 95.0 / 1)",
+    "secondaryColor": "oklch(58.0% 0.060 260.0 / 1)"
+  }
 ]
