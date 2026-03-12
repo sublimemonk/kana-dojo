@@ -407,7 +407,7 @@
     "explanation": "ので is smoother/neutral for reason. (Pattern set 3)",
     "id": 51,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "wrong": "もし雨が降ります、行きません。",
@@ -447,7 +447,7 @@
     "explanation": "わかる takes が. (Pattern set 3)",
     "id": 56,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "wrong": "宿題を忘れないよう、メモします。",
@@ -455,14 +455,14 @@
     "explanation": "Use ように for purpose/prevention. (Pattern set 3)",
     "id": 57,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "wrong": "駅まで十分歩きますかかる。",
     "correct": "駅まで歩いて十分かかる。",
     "explanation": "Use natural collocation and order. (Pattern set 3)",
     "id": 58,
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
@@ -790,7 +790,7 @@
     "correct": "この漢字の読み方は難しいです。",
     "explanation": "Prefer noun linkage with の. (Pattern set 5)",
     "id": 99,
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
@@ -838,7 +838,7 @@
     "correct": "先生は私に日本語を教えました。",
     "explanation": "Recipient takes に with 教える. (Pattern set 6)",
     "id": 105,
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
@@ -927,7 +927,7 @@
     "explanation": "わかる takes が. (Pattern set 6)",
     "id": 116,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "wrong": "宿題を忘れないよう、メモします。",
@@ -935,14 +935,14 @@
     "explanation": "Use ように for purpose/prevention. (Pattern set 6)",
     "id": 117,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "wrong": "駅まで十分歩きますかかる。",
     "correct": "駅まで歩いて十分かかる。",
     "explanation": "Use natural collocation and order. (Pattern set 6)",
     "id": 118,
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
