@@ -51,7 +51,7 @@
     "example": "ホテルの朝食はバイキングです。",
     "id": 6,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "termA": "カンニング (kanningu)",
@@ -411,7 +411,7 @@
     "example": "ホテルの朝食はバイキングです。",
     "id": 46,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "termA": "カンニング (kanningu)",
@@ -419,7 +419,7 @@
     "explanation": "カンニング means cheating on tests. (Set 3)",
     "example": "試験でカンニングしてはいけません。",
     "id": 47,
-    "issued": false,
+    "issued": true,
     "completed": false
   },
   {
@@ -593,7 +593,7 @@
     "example": "ホテルの朝食はバイキングです。",
     "id": 66,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "termA": "カンニング (kanningu)",
@@ -773,7 +773,7 @@
     "example": "ホテルの朝食はバイキングです。",
     "id": 86,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "termA": "カンニング (kanningu)",
@@ -953,7 +953,7 @@
     "example": "ホテルの朝食はバイキングです。",
     "id": 106,
     "issued": false,
-    "completed": false
+    "completed": true
   },
   {
     "termA": "カンニング (kanningu)",
