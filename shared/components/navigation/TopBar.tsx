@@ -2,8 +2,9 @@
 
 import { Link } from '@/core/i18n/routing';
 import { useClick } from '@/shared/hooks/generic/useAudio';
+import { cn } from '@/shared/lib/utils';
 import clsx from 'clsx';
-import { Settings, type LucideIcon } from 'lucide-react';
+import { Sparkles, type LucideIcon } from 'lucide-react';
 
 type NavItem = {
   name: string;
@@ -19,7 +20,7 @@ export default function TopBar() {
     { name: 'Kana', href: '/kana', charIcon: 'あ' },
     { name: 'Kanji', href: '/kanji', charIcon: '字' },
     { name: 'Vocab', href: '/vocabulary', charIcon: '語' },
-    { name: 'Preferences', href: '/preferences', icon: Settings },
+    { name: 'Preferences', href: '/preferences', icon: Sparkles },
   ];
 
   return (
@@ -36,23 +37,51 @@ export default function TopBar() {
         </Link>
 
         {/* Navigation Links */}
-        <div className='hidden items-center gap-1 md:flex'>
-          {navItems.map(item => (
+        <div className='items-center gap-1 md:flex'>
+          {navItems.map((item, index) => (
             <Link
               key={item.name}
               href={item.href}
               onClick={() => playClick()}
               className={clsx(
-                'flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors',
+                'flex items-center gap-2 rounded-lg px-3 py-2 text-base font-medium transition-colors',
                 'text-(--secondary-color) hover:bg-(--border-color) hover:text-(--main-color)',
               )}
             >
               {item.charIcon ? (
-                <span className='text-base'>{item.charIcon}</span>
+                <span
+                  className={clsx(
+                    'inline-flex h-8 w-8 items-center justify-center rounded-xl text-lg',
+                    'bg-(--secondary-color) text-(--background-color)',
+                    'border-b-4 border-(--secondary-color-accent)',
+                    'transition-all duration-200',
+                    'motion-safe:animate-float',
+                    index === 0 &&
+                      '[--float-distance:-4px] [animation-delay:0ms]',
+                    index === 1 &&
+                      '[--float-distance:-3px] [animation-delay:800ms]',
+                    index === 2 &&
+                      '[--float-distance:-5px] [animation-delay:1600ms]',
+                  )}
+                >
+                  {item.charIcon}
+                </span>
               ) : (
-                item.icon && <item.icon className='size-4' />
+                item.icon && (
+                  <span
+                    className={clsx(
+                      'inline-flex h-8 w-8 items-center justify-center rounded-xl',
+                      'bg-(--main-color) text-(--background-color)',
+                      'border-b-4 border-(--main-color-accent)',
+                      'transition-all duration-200',
+                      'motion-safe:animate-float [--float-distance:-4px] [animation-delay:400ms]',
+                    )}
+                  >
+                    <item.icon className='size-4' />
+                  </span>
+                )
               )}
-              <span>{item.name}</span>
+              <span className={cn('text-(--main-color)')}>{item.name}</span>
             </Link>
           ))}
         </div>
