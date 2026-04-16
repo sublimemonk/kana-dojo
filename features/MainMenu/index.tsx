@@ -178,7 +178,7 @@ const MainMenu = () => {
                 setTheme(theme === 'dark' ? 'light' : 'dark');
               }}
               className={clsx(
-                'hidden md:inline-flex',
+                'hidden sm:inline-flex',
                 'duration-250 hover:cursor-pointer hover:scale-105',
                 'active:scale-100 active:duration-225',
                 'text-(--secondary-color) hover:text-(--main-color)',
@@ -194,26 +194,10 @@ const MainMenu = () => {
                 window.open('https://tally.so/r/2E4rB9', '_blank', 'noopener');
               }}
               className={clsx(
-                'inline-flex md:hidden',
+                'inline-flex',
                 'duration-250 hover:cursor-pointer hover:scale-105',
                 'active:scale-100 active:duration-225',
-                'text-(--secondary-color) hover:text-(--main-color)',
-              )}
-              aria-label='Report a bug'
-            >
-              <Bug size={32} />
-            </button>
-            <button
-              type='button'
-              onClick={() => {
-                playClick();
-                window.open('https://tally.so/r/2E4rB9', '_blank', 'noopener');
-              }}
-              className={clsx(
-                'hidden md:inline-flex',
-                'duration-250 hover:cursor-pointer hover:scale-105',
-                'active:scale-100 active:duration-225',
-                'text-(--secondary-color) hover:text-(--main-color)',
+                'fill-current text-(--secondary-color) hover:text-(--main-color)',
               )}
               aria-label='Report a bug'
             >
