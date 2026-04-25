@@ -1063,7 +1063,7 @@
     "english": "Spilled water will not return to the tray",
     "meaning": "What is done cannot be undone",
     "completed": false,
-    "issued": false
+    "issued": true
   },
   {
     "id": 119,
