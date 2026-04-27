@@ -141,7 +141,7 @@ const baseThemeSets: BaseThemeGroup[] = [
       {
         id: 'sapphire-bloom',
         backgroundColor: 'oklch(23.44% 0.0432 267.85 / 1)',
-        mainColor: 'oklch(79.09% 0.1242 299.66 / 1)',
+        mainColor: 'oklch(79.09% 0.1242 145 / 1)',
         secondaryColor: 'oklch(89.39% 0.1672 171.49 / 1)',
       },
       {
