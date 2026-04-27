@@ -2,9 +2,10 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 import { generatePageMetadata } from '@/core/i18n/metadata-helpers';
 import { routing, type Locale } from '@/core/i18n/routing';
-import { Breadcrumbs } from '@/shared/components/Breadcrumbs';
+import { Breadcrumbs } from '@/shared/ui-composite/Breadcrumbs';
+import { BreadcrumbSchema } from '@/shared/ui-composite/SEO/BreadcrumbSchema';
 import FAQSection from './FAQSection';
-import { StructuredData } from '@/shared/components/SEO/StructuredData';
+import { StructuredData } from '@/shared/ui-composite/SEO/StructuredData';
 
 export function generateStaticParams() {
   return routing.locales.map(locale => ({ locale }));
@@ -151,25 +152,64 @@ export default async function FAQPage({
   ];
 
   const faqsForSchema = groups.flatMap(group => group.faqs);
+  const pageUrl = `https://kanadojo.com/${locale}/faq`;
 
   const faqSchema = {
     '@context': 'https://schema.org',
-    '@type': 'FAQPage',
-    '@id': `https://kanadojo.com/${locale}/faq#faq`,
-    inLanguage: locale,
-    mainEntity: faqsForSchema.map(faq => ({
-      '@type': 'Question',
-      name: faq.question,
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: faq.answer,
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': `${pageUrl}#webpage`,
+        url: pageUrl,
+        name: t('title'),
+        description: t('subtitle'),
+        inLanguage: locale,
+        isPartOf: {
+          '@id': 'https://kanadojo.com/#website',
+        },
+        about: {
+          '@type': 'Thing',
+          name: 'Japanese learning',
+        },
       },
-    })),
+      {
+        '@type': 'FAQPage',
+        '@id': `${pageUrl}#faq`,
+        url: pageUrl,
+        inLanguage: locale,
+        mainEntity: faqsForSchema.map(faq => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: faq.answer,
+          },
+        })),
+      },
+      {
+        '@type': 'ItemList',
+        '@id': `${pageUrl}#sections`,
+        itemListOrder: 'https://schema.org/ItemListOrderAscending',
+        numberOfItems: groups.length,
+        itemListElement: groups.map((group, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          name: group.title,
+          url: `${pageUrl}#${group.id}`,
+        })),
+      },
+    ],
   };
 
   return (
     <>
       <StructuredData data={faqSchema} />
+      <BreadcrumbSchema
+        items={[
+          { name: 'Home', url: `https://kanadojo.com/${locale}` },
+          { name: 'FAQ', url: `https://kanadojo.com/${locale}/faq` },
+        ]}
+      />
 
       <div className='relative overflow-hidden'>
         <div className='pointer-events-none absolute inset-0'>
@@ -214,7 +254,7 @@ export default async function FAQPage({
                 {t('links.glossary')}
               </Link>
               <Link
-                href={`/${locale}/translate`}
+                href='/translate'
                 className='rounded-full border border-(--border-color) bg-[color-mix(in_oklab,var(--card-color),transparent_0%)] px-4 py-2 text-sm font-semibold text-(--main-color) shadow-[0_1px_0_rgba(0,0,0,0.05)] transition-colors hover:bg-[color-mix(in_oklab,var(--card-color),var(--main-color)_6%)]'
               >
                 {t('links.translator')}
@@ -337,3 +377,4 @@ export default async function FAQPage({
     </>
   );
 }
+

@@ -118,7 +118,7 @@ The Anki Converter is part of the KanaDojo project. No separate installation is 
 
 ### Web Interface
 
-**Access:** Navigate to `/tools/anki-converter` in the application
+**Access:** Navigate to `/anki-converter` in the application
 
 **Steps:**
 

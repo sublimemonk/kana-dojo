@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import type { Metadata } from 'next';
+import { routing } from '@/core/i18n/routing';
 
 const DEFAULT_BASE_URL = 'https://kanadojo.com';
 
@@ -22,17 +23,45 @@ function joinUrl(
   const normalizedPathname = pathname.startsWith('/')
     ? pathname
     : `/${pathname}`;
-
-  if (!locale) {
-    return `${normalizedBaseUrl}${normalizedPathname === '/' ? '' : normalizedPathname}`;
+  const path = normalizedPathname === '/' ? '' : normalizedPathname;
+  if (routing.localePrefix === 'never') {
+    return `${normalizedBaseUrl}${path}`;
   }
 
-  // Locale root is represented as /{locale} (no trailing slash)
-  if (normalizedPathname === '/') {
-    return `${normalizedBaseUrl}/${locale}`;
+  const normalizedLocale =
+    locale && routing.locales.includes(locale as never)
+      ? locale
+      : routing.defaultLocale;
+  return `${normalizedBaseUrl}/${normalizedLocale}${path}`;
+}
+
+function getLanguageAlternates(baseUrl: string, pathname: string) {
+  const normalizedBaseUrl = baseUrl.replace(/\/$/, '');
+  const normalizedPathname = pathname.startsWith('/')
+    ? pathname
+    : `/${pathname}`;
+  const path = normalizedPathname === '/' ? '' : normalizedPathname;
+
+  if (routing.localePrefix === 'never') {
+    const canonicalPath = `${normalizedBaseUrl}${path}`;
+    const languages = Object.fromEntries(
+      routing.locales.map(locale => [locale, canonicalPath]),
+    );
+
+    return {
+      ...languages,
+      'x-default': canonicalPath,
+    };
   }
 
-  return `${normalizedBaseUrl}/${locale}${normalizedPathname}`;
+  const languages = Object.fromEntries(
+    routing.locales.map(locale => [locale, `${normalizedBaseUrl}/${locale}${path}`]),
+  );
+
+  return {
+    ...languages,
+    'x-default': `${normalizedBaseUrl}/${routing.defaultLocale}${path}`,
+  };
 }
 
 /**
@@ -76,13 +105,6 @@ export async function generatePageMetadata(
   const ogImageUrl = `https://kanadojo.com/api/og?title=${encodeURIComponent(titleShort)}&description=${encodeURIComponent(description.slice(0, 100))}&type=${imageType}`;
 
   const canonicalUrl = joinUrl(baseUrl, locale, pathname);
-  const alternatesLanguages: Record<string, string> | undefined = locale
-    ? {
-        en: joinUrl(baseUrl, 'en', pathname),
-        es: joinUrl(baseUrl, 'es', pathname),
-      }
-    : undefined;
-
   return {
     title,
     description,
@@ -109,7 +131,7 @@ export async function generatePageMetadata(
     },
     alternates: {
       canonical: canonicalUrl,
-      languages: alternatesLanguages,
+      languages: getLanguageAlternates(baseUrl, pathname),
     },
   };
 }

@@ -1,6 +1,15 @@
 'use client';
 
 import clsx from 'clsx';
+import { motion } from 'framer-motion';
+import { useClick } from '@/shared/hooks/generic/useAudio';
+import { cn } from '@/shared/utils/utils';
+import {
+  CalendarDays,
+  CalendarRange,
+  Calendars,
+  type LucideIcon,
+} from 'lucide-react';
 import {
   type TimePeriod,
   getDaysInPeriod,
@@ -16,6 +25,7 @@ const EMPTY_WEEK: (string | null)[] = Array(7).fill(null);
 interface StreakGridProps {
   visits: string[];
   period: TimePeriod;
+  onPeriodChange: (period: TimePeriod) => void;
 }
 
 /**
@@ -43,6 +53,13 @@ const FULL_MONTH_NAMES = [
   'November',
   'December',
 ];
+
+const periodOptions: { value: TimePeriod; label: string; icon: LucideIcon }[] =
+  [
+    { value: 'week', label: 'Week', icon: CalendarDays },
+    { value: 'month', label: 'Month', icon: Calendars },
+    { value: 'year', label: 'Year', icon: CalendarRange },
+  ];
 
 /**
  * GitHub-style contribution grid cell
@@ -209,9 +226,7 @@ function MonthGrid({ visits }: { visits: string[]; days: string[] }) {
   return (
     <div className='flex flex-col gap-3'>
       {/* Month title */}
-      <h3 className='text-lg font-semibold text-(--main-color)'>
-        {monthName}
-      </h3>
+      <h3 className='text-lg font-semibold text-(--main-color)'>{monthName}</h3>
 
       <div className='flex gap-2'>
         {/* Day labels on the left */}
@@ -298,7 +313,6 @@ function YearGrid({ visits }: { visits: string[]; days: string[] }) {
 
   // Find what day of the week Jan 1 falls on
   const jan1 = new Date(currentYear, 0, 1);
-  const jan1DayOfWeek = jan1.getDay() === 0 ? 6 : jan1.getDay() - 1; // Monday = 0
 
   // Fill in days before Jan 1 in the first week with nulls (already done)
   for (const day of allYearDays) {
@@ -408,17 +422,61 @@ function YearGrid({ visits }: { visits: string[]; days: string[] }) {
   );
 }
 
-export default function StreakGrid({ visits, period }: StreakGridProps) {
+export default function StreakGrid({
+  visits,
+  period,
+  onPeriodChange,
+}: StreakGridProps) {
+  const { playClick } = useClick();
   const days = getDaysInPeriod(period);
 
   return (
-    <div className='rounded-2xl border border-(--border-color) bg-(--card-color) p-5'>
-      {period === 'week' && <WeekGrid visits={visits} days={days} />}
-      {period === 'month' && <MonthGrid visits={visits} days={days} />}
-      {period === 'year' && <YearGrid visits={visits} days={days} />}
+    <div className='overflow-hidden rounded-2xl bg-(--card-color)'>
+      <div className='flex border-b-2 border-(--border-color)'>
+        {periodOptions.map(option => {
+          const isSelected = period === option.value;
+          const Icon = option.icon;
+          return (
+            <button
+              key={option.value}
+              onClick={() => {
+                onPeriodChange(option.value);
+                playClick();
+              }}
+              className={cn(
+                'relative flex flex-1 cursor-pointer items-center justify-center gap-2 py-4 text-sm font-semibold transition-colors duration-300',
+                isSelected
+                  ? 'text-(--main-color)'
+                  : 'text-(--secondary-color) hover:text-(--main-color)',
+              )}
+            >
+              <Icon className='h-5 w-5' />
+              <span>{option.label}</span>
+
+              {isSelected && (
+                <motion.div
+                  layoutId='activeStreakPeriodBorder'
+                  className='absolute right-0 bottom-[-2px] left-0 h-[2px] bg-(--main-color)'
+                  transition={{
+                    type: 'spring',
+                    stiffness: 300,
+                    damping: 30,
+                  }}
+                />
+              )}
+            </button>
+          );
+        })}
+      </div>
+      <div className='p-6'>
+        {period === 'week' && <WeekGrid visits={visits} days={days} />}
+        {period === 'month' && <MonthGrid visits={visits} days={days} />}
+        {period === 'year' && <YearGrid visits={visits} days={days} />}
+      </div>
     </div>
   );
 }
 
 // Export for testing
 export { getDaysInPeriod };
+

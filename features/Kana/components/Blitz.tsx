@@ -4,11 +4,11 @@ import React from 'react';
 import useKanaStore from '@/features/Kana/store/useKanaStore';
 import { useStatsStore } from '@/features/Progress';
 import { generateKanaQuestion } from '@/features/Kana/lib/generateKanaQuestions';
-import type { KanaCharacter } from '@/features/Kana/lib/generateKanaQuestions';
 import { flattenKanaGroups } from '@/features/Kana/lib/flattenKanaGroup';
-import { getSelectionLabels } from '@/shared/lib/selectionFormatting';
-import { shuffle } from '@/shared/lib/shuffle';
-import Blitz, { type BlitzConfig } from '@/shared/components/Blitz';
+import type { KanaCharacter } from '@/features/Kana/lib/flattenKanaGroup';
+import { getSelectionLabels } from '@/shared/utils/selectionFormatting';
+import { shuffle } from '@/shared/utils/shuffle';
+import Blitz, { type BlitzConfig } from '@/shared/ui-composite/Blitz';
 
 export default function BlitzKana() {
   const kanaGroupIndices = useKanaStore(state => state.kanaGroupIndices);
@@ -17,7 +17,7 @@ export default function BlitzKana() {
   );
 
   const selectedKana = React.useMemo(
-    () => flattenKanaGroups(kanaGroupIndices) as unknown as KanaCharacter[],
+    () => flattenKanaGroups(kanaGroupIndices),
     [kanaGroupIndices],
   );
 
@@ -99,3 +99,4 @@ export default function BlitzKana() {
 
   return <Blitz config={config} />;
 }
+

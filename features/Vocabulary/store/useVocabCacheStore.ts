@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import { createJSONStorage, persist } from 'zustand/middleware';
-import type { IVocabObj } from '@/features/Vocabulary/store/useVocabStore';
+import type { IVocabObj, VocabLevel } from '@/entities/vocabulary';
 
-export type VocabLevel = 'n5' | 'n4' | 'n3' | 'n2' | 'n1';
+export type { VocabLevel } from '@/entities/vocabulary';
 
 type VocabCacheState = {
   cachedByLevel: Partial<Record<VocabLevel, IVocabObj[]>>;
@@ -33,11 +33,10 @@ export const useVocabCacheStore = create<VocabCacheState>()(
     }),
     {
       name: 'vocab-cache',
-      storage: createJSONStorage(() =>
-        typeof window === 'undefined'
-          ? (undefined as unknown as Storage)
-          : sessionStorage,
-      ),
+      storage:
+        typeof window !== 'undefined'
+          ? createJSONStorage(() => sessionStorage)
+          : undefined,
     },
   ),
 );

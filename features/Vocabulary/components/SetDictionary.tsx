@@ -3,9 +3,9 @@
 import clsx from 'clsx';
 import { toKana, toRomaji } from 'wanakana';
 import { IWord } from '@/shared/types/interfaces';
-import { cardBorderStyles } from '@/shared/lib/styles';
+import { cardBorderStyles } from '@/shared/utils/styles';
 import { useThemePreferences } from '@/features/Preferences';
-import FuriganaText from '@/shared/components/text/FuriganaText';
+import FuriganaText from '@/shared/ui-composite/text/FuriganaText';
 import { memo } from 'react';
 
 type SetDictionaryProps = {
@@ -18,7 +18,7 @@ const SetDictionary = memo(function SetDictionary({
   const { displayKana: showKana } = useThemePreferences();
 
   return (
-    <div className={clsx('flex flex-col', cardBorderStyles)}>
+    <div className={clsx('flex flex-col')}>
       {words.map((wordObj, i) => {
         const rawReading =
           typeof wordObj.reading === 'string' ? wordObj.reading : '';
@@ -32,8 +32,7 @@ const SetDictionary = memo(function SetDictionary({
             key={`${wordObj.word}-${i}`}
             className={clsx(
               'flex flex-col items-start justify-start gap-4 py-4 max-md:px-4',
-              i !== words.length - 1 &&
-                'border-b-1 border-(--border-color)',
+              i !== words.length - 1 && 'border-b-1 border-(--border-color)',
             )}
           >
             <a
@@ -74,3 +73,4 @@ const SetDictionary = memo(function SetDictionary({
 });
 
 export default SetDictionary;
+

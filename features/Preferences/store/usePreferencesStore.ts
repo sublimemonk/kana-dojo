@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Wallpaper, WallpaperCategory } from '../data/wallpapers';
-import { generateWallpaperId, isValidImageUrl } from '../data/wallpapers';
+import { DEFAULT_CLICK_SOUND_ID } from '@/features/Preferences/data/audio/clickSounds';
+import type { ClickSoundId } from '@/features/Preferences/data/audio/clickSounds';
 
 interface PreferencesState {
   displayKana: boolean;
@@ -36,6 +36,9 @@ interface PreferencesState {
   pronunciationVoiceName: string | null;
   setPronunciationVoiceName: (name: string | null) => void;
 
+  pronunciationAutoPlay: boolean;
+  setPronunciationAutoPlay: (enabled: boolean) => void;
+
   furiganaEnabled: boolean;
   setFuriganaEnabled: (enabled: boolean) => void;
 
@@ -45,15 +48,17 @@ interface PreferencesState {
 
   // Wallpaper settings
   selectedWallpaperId: string | null; // Currently active wallpaper
-  customWallpapers: Wallpaper[]; // User-added wallpapers
   setSelectedWallpaper: (id: string | null) => void;
-  addCustomWallpaper: (
-    name: string,
-    url: string,
-    category?: WallpaperCategory,
-  ) => boolean;
-  removeCustomWallpaper: (id: string) => void;
   clearWallpaper: () => void;
+
+  // Visual effects
+  cursorTrailEffect: string;
+  setCursorTrailEffect: (id: string) => void;
+  clickEffect: string;
+  setClickEffect: (id: string) => void;
+
+  clickSoundId: ClickSoundId;
+  setClickSoundId: (id: ClickSoundId) => void;
 }
 
 const usePreferencesStore = create<PreferencesState>()(
@@ -61,7 +66,7 @@ const usePreferencesStore = create<PreferencesState>()(
     set => ({
       displayKana: false,
       setDisplayKana: displayKana => set({ displayKana }),
-      theme: 'light',
+      theme: 'sapphire-bloom',
       setTheme: theme => set({ theme }),
       isGlassMode: false,
       setGlassMode: isGlassMode => set({ isGlassMode }),
@@ -82,6 +87,9 @@ const usePreferencesStore = create<PreferencesState>()(
       setPronunciationPitch: pitch => set({ pronunciationPitch: pitch }),
       pronunciationVoiceName: null,
       setPronunciationVoiceName: name => set({ pronunciationVoiceName: name }),
+      pronunciationAutoPlay: false,
+      setPronunciationAutoPlay: enabled =>
+        set({ pronunciationAutoPlay: enabled }),
       furiganaEnabled: false,
       setFuriganaEnabled: enabled => set({ furiganaEnabled: enabled }),
 
@@ -91,56 +99,18 @@ const usePreferencesStore = create<PreferencesState>()(
 
       // Wallpaper settings
       selectedWallpaperId: null,
-      customWallpapers: [],
 
       setSelectedWallpaper: id => set({ selectedWallpaperId: id }),
 
-      addCustomWallpaper: (name, url, category = 'custom') => {
-        // Validate URL
-        if (!isValidImageUrl(url)) {
-          console.error('Invalid image URL:', url);
-          return false;
-        }
-
-        const newWallpaper: Wallpaper = {
-          id: generateWallpaperId(),
-          name: name.trim() || 'Custom Wallpaper',
-          url,
-          category,
-          isUserAdded: true,
-          createdAt: Date.now(),
-        };
-
-        set(state => ({
-          customWallpapers: [...state.customWallpapers, newWallpaper],
-        }));
-        return true;
-      },
-
-      removeCustomWallpaper: id => {
-        set(state => {
-          const wallpaper = state.customWallpapers.find(w => w.id === id);
-
-          // Only allow deletion of user-added wallpapers
-          if (!wallpaper || !wallpaper.isUserAdded) {
-            console.warn('Cannot delete base wallpaper');
-            return state;
-          }
-
-          // If deleted wallpaper is currently selected, clear selection
-          const updates: Partial<PreferencesState> = {
-            customWallpapers: state.customWallpapers.filter(w => w.id !== id),
-          };
-
-          if (state.selectedWallpaperId === id) {
-            updates.selectedWallpaperId = null;
-          }
-
-          return updates;
-        });
-      },
-
       clearWallpaper: () => set({ selectedWallpaperId: null }),
+
+      // Visual effects
+      cursorTrailEffect: 'none',
+      setCursorTrailEffect: id => set({ cursorTrailEffect: id }),
+      clickEffect: 'none',
+      setClickEffect: id => set({ clickEffect: id }),
+      clickSoundId: DEFAULT_CLICK_SOUND_ID,
+      setClickSoundId: id => set({ clickSoundId: id }),
     }),
 
     {

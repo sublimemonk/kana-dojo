@@ -1,9 +1,10 @@
-import KanaMenu from '@/shared/components/Menu/KanaMenu';
+import { KanaMenu } from '@/widgets';
 import type { Metadata } from 'next';
 import { generatePageMetadata } from '@/core/i18n/metadata-helpers';
-import { CourseSchema } from '@/shared/components/SEO/CourseSchema';
-import { BreadcrumbSchema } from '@/shared/components/SEO/BreadcrumbSchema';
-import { LearningResourceSchema } from '@/shared/components/SEO/LearningResourceSchema';
+import { CourseSchema } from '@/shared/ui-composite/SEO/CourseSchema';
+import { BreadcrumbSchema } from '@/shared/ui-composite/SEO/BreadcrumbSchema';
+import { LearningResourceSchema } from '@/shared/ui-composite/SEO/LearningResourceSchema';
+import { FAQSchema, hiraganaFAQs } from '@/shared/ui-composite/SEO/FAQSchema';
 import { routing } from '@/core/i18n/routing';
 
 export function generateStaticParams() {
@@ -44,8 +45,8 @@ export default async function LearnHiraganaPage({
         ]}
       />
       <CourseSchema
-        name='Learn Hiragana - Japanese Alphabet Course'
-        description='Master Hiragana with interactive drills, kana selection cards, and instant feedback. Study the full hiragana chart, dakuon, and yoon with guided practice and progress tracking.'
+        name='Learn Hiragana - Complete Japanese Alphabet Course'
+        description='Master Hiragana with interactive drills, kana selection cards, and instant feedback. Study the full hiragana chart, dakuon, and yoon with guided beginner-friendly practice.'
         url={`https://kanadojo.com/${locale}/kana/learn-hiragana`}
         educationalLevel='Beginner'
         skillLevel='Beginner'
@@ -53,17 +54,19 @@ export default async function LearnHiraganaPage({
       />
       <LearningResourceSchema
         name='Hiragana Practice Playground'
-        description='Interactive Hiragana learning hub with selectable character groups, drills, and training modes. Designed for fast recognition, pronunciation, and reading confidence.'
+        description='Interactive Hiragana learning hub with selectable character groups, drills, and training modes. Designed for fast recognition, pronunciation, and reading confidence for absolute beginners.'
         url={`https://kanadojo.com/${locale}/kana/learn-hiragana`}
-        learningResourceType='Interactive'
+        learningResourceType={['Interactive', 'Quiz', 'Game']}
         educationalLevel={['Beginner', 'Intermediate']}
-        teaches='Japanese Hiragana reading, recognition, and pronunciation'
-        assesses='Hiragana recognition speed and accuracy'
+        teaches='Japanese Hiragana chart, reading, recognition, and pronunciation'
+        assesses='Hiragana recognition speed, accuracy, and recall'
         timeRequired='PT20M'
         isAccessibleForFree={true}
         provider={{ name: 'KanaDojo', url: 'https://kanadojo.com' }}
       />
+      <FAQSchema faqs={hiraganaFAQs} />
       <KanaMenu filter='hiragana' />
     </>
   );
 }
+

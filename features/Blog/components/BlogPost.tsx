@@ -1,7 +1,11 @@
 'use client';
 
 import React from 'react';
-import { cn } from '@/shared/lib/utils';
+import { cn } from '@/shared/utils/utils';
+import {
+  formatLastUpdated,
+  getFreshnessBadge,
+} from '@/shared/utils/content-freshness';
 import type {
   BlogPost as BlogPostType,
   BlogPostMeta,
@@ -10,10 +14,10 @@ import type {
 import { TableOfContents } from './TableOfContents';
 import { RelatedPosts } from './RelatedPosts';
 import { mdxComponents } from './mdx';
-import { ActionButton } from '@/shared/components/ui/ActionButton';
+import { ActionButton } from '@/shared/ui/components/ActionButton';
 import { Link } from '@/core/i18n/routing';
 import { ArrowLeft, BookOpen } from 'lucide-react';
-import { useClick } from '@/shared/hooks/useAudio';
+import { useClick } from '@/shared/hooks/generic/useAudio';
 
 /**
  * Category badge color mappings
@@ -116,6 +120,25 @@ export function BlogPost({
                 <span className='italic opacity-40'>Released</span>
                 <time dateTime={post.publishedAt}>{formattedDate}</time>
               </div>
+              {post.updatedAt && (
+                <div className='flex items-center gap-3'>
+                  <span className='italic opacity-40'>Updated</span>
+                  <time dateTime={post.updatedAt}>
+                    {formatLastUpdated(post.updatedAt)}
+                  </time>
+                  {(() => {
+                    const badge = getFreshnessBadge(post.updatedAt);
+                    if (badge.variant === 'fresh') {
+                      return (
+                        <span className='rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-bold text-emerald-500 normal-case'>
+                          {badge.label}
+                        </span>
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
+              )}
               {post.difficulty && (
                 <div className='ml-auto flex items-center gap-3'>
                   <span className='italic opacity-40'>Level</span>
@@ -224,3 +247,4 @@ export function BlogPost({
 export { mdxComponents };
 
 export default BlogPost;
+

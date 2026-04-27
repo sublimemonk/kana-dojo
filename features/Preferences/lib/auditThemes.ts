@@ -3,7 +3,7 @@
  * Run this to validate all themes against WCAG requirements
  */
 
-import themeSets from '../data/themes';
+import themeSets from '../data/themes/themes';
 import {
   validateTheme,
   getValidationSummary,

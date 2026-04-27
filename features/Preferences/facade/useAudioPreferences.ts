@@ -2,6 +2,7 @@
 
 import { useMemo } from 'react';
 import usePreferencesStore from '../store/usePreferencesStore';
+import type { ClickSoundId } from '@/features/Preferences/data/audio/clickSounds';
 
 export interface AudioPreferences {
   silentMode: boolean;
@@ -14,6 +15,10 @@ export interface AudioPreferences {
   setPronunciationPitch: (pitch: number) => void;
   pronunciationVoiceName: string | null;
   setPronunciationVoiceName: (name: string | null) => void;
+  pronunciationAutoPlay: boolean;
+  setPronunciationAutoPlay: (enabled: boolean) => void;
+  clickSoundId: ClickSoundId;
+  setClickSoundId: (id: ClickSoundId) => void;
 }
 
 /**
@@ -48,6 +53,14 @@ export function useAudioPreferences(): AudioPreferences {
   const setPronunciationVoiceName = usePreferencesStore(
     state => state.setPronunciationVoiceName,
   );
+  const pronunciationAutoPlay = usePreferencesStore(
+    state => state.pronunciationAutoPlay,
+  );
+  const setPronunciationAutoPlay = usePreferencesStore(
+    state => state.setPronunciationAutoPlay,
+  );
+  const clickSoundId = usePreferencesStore(state => state.clickSoundId);
+  const setClickSoundId = usePreferencesStore(state => state.setClickSoundId);
 
   return useMemo<AudioPreferences>(
     () => ({
@@ -61,6 +74,10 @@ export function useAudioPreferences(): AudioPreferences {
       setPronunciationPitch,
       pronunciationVoiceName,
       setPronunciationVoiceName,
+      pronunciationAutoPlay,
+      setPronunciationAutoPlay,
+      clickSoundId,
+      setClickSoundId,
     }),
     [
       silentMode,
@@ -73,6 +90,10 @@ export function useAudioPreferences(): AudioPreferences {
       setPronunciationPitch,
       pronunciationVoiceName,
       setPronunciationVoiceName,
+      pronunciationAutoPlay,
+      setPronunciationAutoPlay,
+      clickSoundId,
+      setClickSoundId,
     ],
   );
 }

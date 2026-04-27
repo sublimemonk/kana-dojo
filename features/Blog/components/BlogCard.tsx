@@ -1,26 +1,14 @@
 'use client';
 
 import React from 'react';
-import { Link } from '@/shared/components/navigation/Link';
-import { cn } from '@/shared/lib/utils';
-import type { BlogPostMeta, Category } from '../types/blog';
-
-/**
- * Category badge color mappings
- */
-const categoryColors: Record<Category, string> = {
-  hiragana: 'bg-pink-500/20 text-pink-400 border-pink-500/30',
-  katakana: 'bg-purple-500/20 text-purple-400 border-purple-500/30',
-  kanji: 'bg-blue-500/20 text-blue-400 border-blue-500/30',
-  vocabulary: 'bg-green-500/20 text-green-400 border-green-500/30',
-  grammar: 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30',
-  culture: 'bg-orange-500/20 text-orange-400 border-orange-500/30',
-  comparison: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
-  tutorial: 'bg-indigo-500/20 text-indigo-400 border-indigo-500/30',
-  resources: 'bg-teal-500/20 text-teal-400 border-teal-500/30',
-  'study-tips': 'bg-lime-500/20 text-lime-400 border-lime-500/30',
-  jlpt: 'bg-red-500/20 text-red-400 border-red-500/30',
-};
+import Image from 'next/image';
+import { Link } from '@/shared/ui-composite/navigation/Link';
+import { cn } from '@/shared/utils/utils';
+import {
+  formatLastUpdated,
+  getFreshnessBadge,
+} from '@/shared/utils/content-freshness';
+import type { BlogPostMeta } from '../types/blog';
 
 interface BlogCardProps {
   /** Blog post metadata to display */
@@ -67,10 +55,12 @@ export function BlogCard({
         )}
       >
         {post.featuredImage ? (
-          <img
+          <Image
             src={post.featuredImage}
             alt={post.title}
-            className='h-full w-full object-cover transition-transform duration-700 group-hover:scale-105'
+            fill
+            sizes={isFeatured ? '(min-width: 1024px) 66vw, (min-width: 768px) 60vw, 100vw' : '(min-width: 768px) 50vw, 100vw'}
+            className='object-cover transition-transform duration-700 group-hover:scale-105'
           />
         ) : (
           <div className='flex h-full w-full items-center justify-center opacity-10'>
@@ -101,8 +91,27 @@ export function BlogCard({
       >
         <div className='mb-3 flex items-center gap-3 font-mono text-[10px] tracking-tighter text-(--secondary-color) uppercase opacity-50'>
           <time dateTime={post.publishedAt}>{formattedDate}</time>
+          {post.updatedAt && (
+            <>
+              <span className='h-px w-3 bg-(--border-color)' />
+              <span className='text-(--main-color) opacity-70'>
+                {formatLastUpdated(post.updatedAt)}
+              </span>
+            </>
+          )}
           <span className='h-px w-4 bg-(--border-color)' />
           <span>{post.readingTime} min read</span>
+          {(() => {
+            const badge = getFreshnessBadge(post.updatedAt || post.publishedAt);
+            if (badge.variant === 'fresh') {
+              return (
+                <span className='ml-auto rounded-full bg-emerald-500/15 px-2 py-0.5 text-[9px] font-bold tracking-wider text-emerald-500 normal-case'>
+                  {badge.label}
+                </span>
+              );
+            }
+            return null;
+          })()}
         </div>
 
         <Link
@@ -163,3 +172,4 @@ export function BlogCard({
 }
 
 export default BlogCard;
+

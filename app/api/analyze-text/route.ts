@@ -3,26 +3,14 @@ import {
   checkAnalyzeRateLimit,
   getClientIP,
   createRateLimitHeaders,
-} from '@/shared/lib/rateLimit';
+} from '@/shared/infra/server/rateLimit';
 import {
   getRedisCachedJson,
   setRedisCachedJson,
-} from '@/shared/lib/apiCache';
+} from '@/shared/infra/client/apiCache';
 import type { ApiErrorResponse } from '@/shared/types/api';
-
-// Type for kuromoji token
-interface KuromojiToken {
-  surface_form: string; // The actual text
-  pos: string; // Part of speech
-  pos_detail_1: string; // POS detail 1
-  pos_detail_2: string; // POS detail 2
-  pos_detail_3: string; // POS detail 3
-  conjugated_type: string; // Conjugation type
-  conjugated_form: string; // Conjugation form
-  basic_form: string; // Dictionary form
-  reading: string; // Katakana reading
-  pronunciation: string; // Pronunciation
-}
+import type KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
+import type { KuromojiToken } from 'kuroshiro-analyzer-kuromoji';
 
 // Simplified token for client
 export interface AnalyzedToken {
@@ -76,35 +64,37 @@ function cleanupCache() {
   }
 }
 
-// Type for kuroshiro instance
-type KuroshiroInstance = {
-  _analyzer: {
-    parse: (text: string) => Promise<KuromojiToken[]>;
-  };
-};
-
-// Singleton kuroshiro instance
-let kuroshiroInstance: KuroshiroInstance | null = null;
+// Singleton kuromoji analyzer instance
+let kuromojiAnalyzerInstance: KuromojiAnalyzer | null = null;
+let kuromojiAnalyzerInitPromise: Promise<KuromojiAnalyzer> | null = null;
 
 /**
- * Get or initialize kuroshiro with kuromoji analyzer
+ * Get or initialize kuromoji analyzer
  */
-async function getKuroshiro(): Promise<KuroshiroInstance> {
-  if (kuroshiroInstance) {
-    return kuroshiroInstance;
+async function getKuromojiAnalyzer(): Promise<KuromojiAnalyzer> {
+  if (kuromojiAnalyzerInstance) {
+    return kuromojiAnalyzerInstance;
   }
 
-  const [{ default: Kuroshiro }, { default: KuromojiAnalyzer }] =
-    await Promise.all([
-      import('kuroshiro'),
-      import('kuroshiro-analyzer-kuromoji'),
-    ]);
+  if (kuromojiAnalyzerInitPromise) {
+    return kuromojiAnalyzerInitPromise;
+  }
 
-  const kuroshiro = new Kuroshiro();
-  const analyzer = new KuromojiAnalyzer();
-  await kuroshiro.init(analyzer);
-  kuroshiroInstance = kuroshiro as unknown as KuroshiroInstance;
-  return kuroshiroInstance;
+  kuromojiAnalyzerInitPromise = (async () => {
+    const { default: KuromojiAnalyzer } =
+      await import('kuroshiro-analyzer-kuromoji');
+    const analyzer = new KuromojiAnalyzer();
+    await analyzer.init();
+    kuromojiAnalyzerInstance = analyzer;
+    return analyzer;
+  })();
+
+  try {
+    return await kuromojiAnalyzerInitPromise;
+  } catch (error) {
+    kuromojiAnalyzerInitPromise = null;
+    throw error;
+  }
 }
 
 /**
@@ -256,11 +246,9 @@ export async function POST(request: NextRequest) {
       return response;
     }
 
-    // Get kuroshiro instance with kuromoji
-    const kuroshiro = await getKuroshiro();
-
     // Parse text into tokens using kuromoji
-    const kuromojiTokens = await kuroshiro._analyzer.parse(text);
+    const kuromojiAnalyzer = await getKuromojiAnalyzer();
+    const kuromojiTokens = await kuromojiAnalyzer.parse(text);
 
     // Convert to simplified format
     const analyzedTokens: AnalyzedToken[] = kuromojiTokens.map(token => ({

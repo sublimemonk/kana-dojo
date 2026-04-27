@@ -1,37 +1,22 @@
 'use client';
 
-import { useEffect, useRef, Suspense } from 'react';
+import { Suspense, useEffect, useRef } from 'react';
 import { useSearchParams } from 'next/navigation';
-import dynamic from 'next/dynamic';
 import { ArrowLeftRight, WifiOff, Languages, Sparkles } from 'lucide-react';
-import { cn } from '@/shared/lib/utils';
-import { ActionButton } from '@/shared/components/ui/ActionButton';
+import { cn } from '@/shared/utils/utils';
+import { ActionButton } from '@/shared/ui/components/ActionButton';
 
 import useTranslatorStore from '../store/useTranslatorStore';
 import TranslatorInput from './TranslatorInput';
 import TranslatorOutput from './TranslatorOutput';
 import TranslationHistory from './TranslationHistory';
-
-// Lazy load SEOContent for better initial page load performance
-const SEOContent = dynamic(() => import('./SEOContent'), {
-  loading: () => (
-    <div className='mt-6 animate-pulse rounded-2xl border border-(--border-color) bg-(--card-color) p-4 sm:mt-8 sm:p-6'>
-      <div className='mb-4 h-8 w-64 rounded bg-(--border-color)' />
-      <div className='space-y-3'>
-        <div className='h-4 w-full rounded bg-(--border-color)' />
-        <div className='h-4 w-3/4 rounded bg-(--border-color)' />
-        <div className='h-4 w-5/6 rounded bg-(--border-color)' />
-      </div>
-    </div>
-  ),
-  ssr: true, // Keep SSR for SEO purposes
-});
+import SEOContent from './SEOContent';
 
 interface TranslatorPageProps {
   locale?: string;
 }
 
-export default function TranslatorPage({ locale = 'en' }: TranslatorPageProps) {
+function TranslatorPageContent({ locale = 'en' }: TranslatorPageProps) {
   const searchParams = useSearchParams();
   const initializedFromUrl = useRef(false);
 
@@ -114,15 +99,48 @@ export default function TranslatorPage({ locale = 'en' }: TranslatorPageProps) {
         </div>
         <div>
           <h1 className='text-2xl font-bold text-(--main-color) sm:text-3xl'>
-            Free English to Japanese Translator
+            Japanese Translator for English to Japanese and Japanese to English
           </h1>
           <p className='mt-1 text-sm text-(--secondary-color) sm:text-base'>
-            <strong>Translate English to Japanese</strong> or Japanese to
-            English instantly. Get accurate translations with{' '}
-            <strong>romaji pronunciation</strong> — no registration required.
+            Use the main translator for quick two-way translation, then jump
+            into dedicated pages for <strong>English to Japanese</strong>,{' '}
+            <strong>Japanese to English</strong>, and{' '}
+            <strong>romaji support</strong> when you need more context.
           </p>
         </div>
       </header>
+
+      <section
+        className={cn(
+          'grid gap-4 rounded-xl border border-(--border-color) bg-(--card-color) p-4 md:grid-cols-2',
+        )}
+        aria-label='Translator transparency details'
+      >
+        <div>
+          <h2 className='text-base font-semibold text-(--main-color)'>
+            Limits and privacy
+          </h2>
+          <ul className='mt-2 list-disc space-y-1 pl-5 text-sm text-(--secondary-color)'>
+            <li>Up to 5,000 characters per request.</li>
+            <li>Fair-use limits apply during high demand.</li>
+            <li>History is stored locally in your browser.</li>
+          </ul>
+        </div>
+        <div>
+          <h2 className='text-base font-semibold text-(--main-color)'>
+            How to use this hub
+          </h2>
+          <p className='mt-2 text-sm text-(--secondary-color)'>
+            Start with the main translator for quick checks, then open the
+            intent page that matches your exact task.
+          </p>
+          <ul className='mt-2 list-disc space-y-1 pl-5 text-sm text-(--secondary-color)'>
+            <li>Use the hub for broad Japanese translator queries.</li>
+            <li>Use the child pages for direction-specific searches.</li>
+            <li>Cross-check important names, slang, and nuanced phrasing.</li>
+          </ul>
+        </div>
+      </section>
 
       {/* Offline indicator */}
       {isOffline && (
@@ -205,7 +223,16 @@ export default function TranslatorPage({ locale = 'en' }: TranslatorPageProps) {
           onClearAll={clearHistory}
         />
       </div>
-      <SEOContent locale={locale} />
+      <SEOContent />
     </div>
   );
 }
+
+export default function TranslatorPage(props: TranslatorPageProps) {
+  return (
+    <Suspense fallback={null}>
+      <TranslatorPageContent {...props} />
+    </Suspense>
+  );
+}
+

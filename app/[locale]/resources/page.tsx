@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { routing } from '@/core/i18n/routing';
-import { BreadcrumbSchema } from '@/shared/components/SEO/BreadcrumbSchema';
+import { BreadcrumbSchema } from '@/shared/ui-composite/SEO/BreadcrumbSchema';
+import { LearningResourceSchema } from '@/shared/ui-composite/SEO/LearningResourceSchema';
 import Script from 'next/script';
 import { ResourcesPageClient } from './ResourcesPageClient';
 import {
@@ -23,7 +24,7 @@ export async function generateMetadata({
 }: {
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
-  const { locale } = await params;
+  await params;
   const resources = getAllResources();
   const totalCount = resources.length;
 
@@ -48,7 +49,7 @@ export async function generateMetadata({
     openGraph: {
       title: 'Best Japanese Learning Resources | KanaDojo',
       description,
-      url: `https://kanadojo.com/${locale}/resources`,
+      url: 'https://kanadojo.com/resources',
       type: 'website',
     },
     twitter: {
@@ -57,25 +58,36 @@ export async function generateMetadata({
       description,
     },
     alternates: {
-      canonical: `https://kanadojo.com/${locale}/resources`,
-      languages: {
-        en: '/en/resources',
-        es: '/es/resources',
-      },
+      canonical: 'https://kanadojo.com/resources',
     },
   };
 }
 
 // Generate ItemList structured data for SEO
-function generateItemListSchema(resourceCount: number) {
+function generateItemListSchema(
+  resources: ReturnType<typeof getAllResources>,
+  locale: string,
+) {
   return {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'Japanese Learning Resources',
     description:
       'Comprehensive collection of curated Japanese learning resources',
-    numberOfItems: resourceCount,
+    numberOfItems: resources.length,
     itemListOrder: 'https://schema.org/ItemListUnordered',
+    itemListElement: resources.slice(0, 25).map((resource, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      item: {
+        '@type': 'LearningResource',
+        name: resource.name,
+        url: resource.url,
+        educationalLevel:
+          resource.difficulty === 'all-levels' ? 'All Levels' : undefined,
+        inLanguage: locale === 'es' ? 'es' : 'en',
+      },
+    })),
   };
 }
 
@@ -96,11 +108,11 @@ export default async function ResourcesPage({
   const availableFilters = getFilterOptions(resources);
 
   const breadcrumbItems = [
-    { name: 'Home', url: `https://kanadojo.com/${locale}` },
-    { name: 'Resources', url: `https://kanadojo.com/${locale}/resources` },
+    { name: 'Home', url: 'https://kanadojo.com' },
+    { name: 'Resources', url: 'https://kanadojo.com/resources' },
   ];
 
-  const itemListSchema = generateItemListSchema(resources.length);
+  const itemListSchema = generateItemListSchema(resources, locale);
 
   return (
     <>
@@ -110,6 +122,17 @@ export default async function ResourcesPage({
         id='resources-itemlist-schema'
         type='application/ld+json'
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <LearningResourceSchema
+        name='Japanese Learning Resources Library'
+        description={`Curated collection of ${resources.length}+ Japanese learning resources including apps, textbooks, YouTube channels, podcasts, games, and JLPT preparation materials.`}
+        url='https://kanadojo.com/resources'
+        learningResourceType='Course'
+        educationalLevel={['Beginner', 'Intermediate', 'Advanced']}
+        teaches='Japanese Language — Hiragana, Katakana, Kanji, Vocabulary, Grammar'
+        isAccessibleForFree={true}
+        inLanguage={['en', 'ja']}
+        provider={{ name: 'KanaDojo', url: 'https://kanadojo.com' }}
       />
 
       {/* Page Content */}
@@ -122,3 +145,4 @@ export default async function ResourcesPage({
     </>
   );
 }
+

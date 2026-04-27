@@ -8,19 +8,30 @@ module.exports = {
   // SHARED LABELS (used across multiple workflows)
   // =============================================================================
   labels: {
-    // Labels applied to newly created community issues
-    newIssue: [
+    // Core labels always applied to every new community issue
+    coreIssue: [
       'good first issue',
-      'community',
-      'hacktoberfest',
       'help wanted',
-      'easy',
+      'hacktoberfest',
+      'community',
       'up-for-grabs',
       'first-timers-only',
-      'documentation',
-      'beginner-friendly',
+      'low hanging fruit',
       'enhancement',
-      // 'simple task',
+    ],
+    // Pool — 2-3 randomly selected per issue (adds variety, avoids spam signal)
+    secondaryIssuePool: [
+      /*
+      'easy',
+      'beginner',
+      'beginner-friendly',
+      'starter task',
+      'javascript',
+      'documentation',
+      'typescript',
+      'json',
+      'no setup'
+ */
     ],
     // Label for filtering community issues
     community: 'community',
@@ -34,7 +45,7 @@ module.exports = {
   config: {
     // Stale issue timing (in milliseconds)
     staleWarningAfterMs: 12 * 60 * 60 * 1000, // 12 hours
-    staleCloseAfterMs: 18 * 60 * 60 * 1000, // 18 hours
+    staleCloseAfterMs: 24 * 60 * 60 * 1000, // 24 hours
   },
 
   // =============================================================================
@@ -50,7 +61,7 @@ module.exports = {
         'Push your fixes to this PR',
       ],
       footer:
-        'Need help? Comment below. Helpful links: [Contributing]({repoUrl}/blob/main/CONTRIBUTING.md) · [Troubleshooting]({repoUrl}/blob/main/docs/TROUBLESHOOTING.md)',
+        'Need help? Comment below. Helpful links: [Beginner Contributing Guide]({repoUrl}/blob/main/docs/CONTRIBUTING-BEGINNERS.md) · [Troubleshooting]({repoUrl}/blob/main/docs/TROUBLESHOOTING.md)',
     },
     success: {
       title: '## ✅ Quality Check Passed',
@@ -80,8 +91,8 @@ module.exports = {
     thanks: 'ありがとうございます! 🙏',
     firstTimeContributor: {
       separator: '---',
-      title: '🌟 **Welcome to KanaDojo!**',
-      body: "This appears to be your first contribution—that's awesome! We're thrilled to have you here. If you have any questions, don't hesitate to ask.",
+      title: '🎴🗻 **Welcome to KanaDojo!**',
+      body: "This appears to be your first contribution—that's awesome! We're thrilled to have you here. If you have any questions, don't hesitate to ask. 🏯",
     },
   },
 
@@ -93,8 +104,8 @@ module.exports = {
       title: '## 🤖 Auto-Review: ✅ Passed',
       body: 'This {type} contribution has passed automated validation!',
       checks: [
-        'File format is correct',
-        'Content is valid',
+        'Changed files are in the allowed location',
+        'Changed JSON files parse successfully',
         'Related issue found',
       ],
       autoDetectedIssue:
@@ -154,7 +165,7 @@ module.exports = {
       resources: {
         title: '**Helpful resources:**',
         items: [
-          '[Contributing Guide]({repoUrl}/blob/main/CONTRIBUTING.md)',
+          '[Beginner Contributing Guide]({repoUrl}/blob/main/docs/CONTRIBUTING-BEGINNERS.md)',
           '[Troubleshooting]({repoUrl}/blob/main/docs/TROUBLESHOOTING.md)',
           '[Architecture]({repoUrl}/blob/main/docs/ARCHITECTURE.md)',
           '[Code of Conduct]({repoUrl}/blob/main/CODE_OF_CONDUCT.md)',
@@ -174,7 +185,7 @@ module.exports = {
       body: 'This issue has been inactive for 12 hours.',
       action: "If you're still working on it, please comment to let us know!",
       consequence:
-        'Otherwise, it will be automatically closed in **6 hours** and made available for others to claim.',
+        'Otherwise, it will be automatically closed in **12 hours** and made available for others to claim.',
       footer: 'Need help? Just ask! 🙌',
     },
     unassignedWarning: {
@@ -188,14 +199,14 @@ module.exports = {
     },
     closed: {
       title: '🕐 **This issue has been automatically closed**',
-      reason: 'due to 18 hours of inactivity.',
+      reason: 'due to 12 hours after the stale warning.',
       reassurance:
         "Don't worry—the contribution opportunity will be re-posted for someone else to claim.",
       footer: 'Thanks for your interest in contributing to KanaDojo! 🙏',
     },
     unassignedClosed: {
       title: '🕐 **This unassigned issue has been automatically closed**',
-      reason: 'due to 18 hours without activity or a claim.',
+      reason: 'due to 6 hours without activity or a claim.',
       reassurance:
         "Don't worry—this task will be re-posted for someone else to claim.",
       footer: 'Interested in contributing? Keep an eye out for new issues! 🙏',
@@ -208,16 +219,35 @@ module.exports = {
   issueCreation: {
     // Shared constants and helpers
     common: {
+      titleTemplate:
+        // '[Good First Issue] {emoji} Add new {issueType} - Beginner-Friendly Contribution (good-first-issue, <1 min, no setup)',
+        '[Good First Issue] {emoji} Add new {issueType} - Beginner-Friendly Open-source Contribution',
+      shortTitleTemplate: '{emoji} Add new {issueType} {id}',
       difficulty: 'Easy (good first issue!)',
       instructionsHeader: '### 📝 Instructions',
-      footer: "**Questions?** Comment below and we'll help! 🙌",
+      footer:
+        "### 🚀 Quick Info\n\n| | |\n|---|---|\n| **Difficulty** | Beginner / Easy |\n| **Time** | < 1 minute |\n| **Language** | TypeScript, JSON |\n| **Framework** | Next.js, React |\n| **Good for** | First-time contributors, Hacktoberfest |\n\n> **No coding experience required!** This is a simple JSON/data file edit — perfect for your first open source contribution. No setup is required. \n\n**Questions?** Comment below and we'll help! 🙌\n\n_This is a beginner-friendly, good first issue for first-time open source contributors. No coding experience needed — just edit a JSON file! See our [Beginner Contributing Guide](../blob/main/docs/CONTRIBUTING-BEGINNERS.md) for step-by-step instructions._",
+      // Welcome comment posted on freshly created issues for engagement signals
+      welcomeComment:
+        '👋 **This issue is up for grabs!** Comment below to claim it and get auto-assigned.\n\n' +
+        '⏱️ **Takes < 60 seconds** — no coding, no setup, no local installation needed.\n' +
+        '📱 **Works entirely from your phone or browser.**\n' +
+        '🏆 **Your GitHub username will appear in our Contributors list!**\n\n' +
+        'Check the instructions above and our [Beginner Contributing Guide](../blob/main/docs/CONTRIBUTING-BEGINNERS.md) to get started!\n\n' +
+        'がんばって! 💪',
+      // Reaction added to the welcome comment for additional engagement
+      welcomeCommentReaction: 'heart',
+      // Community Contributions milestone number (for issue discoverability)
+      milestoneNumber: 1,
       // Common instruction steps (used by buildInstructions)
       steps: {
-        addComma: 'Make sure to add a comma after the previous last item',
+        star: 'Star our repo ⭐',
+        fork: 'Fork our repo 🍴',
+        addComma:
+          'Add a comma after the previous last entry in the array (so the JSON stays valid)',
         save: 'Save the file and commit the changes',
         linkIssue: 'Link this issue using `Closes #<issue_number>`',
-        finalize:
-          'Star our repo ⭐, drink some delicious bubble tea 🍹 and wait for review!',
+        waitForReview: 'Wait for review!',
       },
     },
 
@@ -230,38 +260,78 @@ module.exports = {
      */
     buildInstructions(filePath, itemType, prTitle, overrides = {}) {
       const steps = this.common.steps;
+      const normalizedFilePath = String(filePath).replace(
+        'community/content/community/content/',
+        'community/content/',
+      );
       return [
-        `Open [\`${filePath}\`](../blob/main/${filePath})`,
+        steps.star,
+        steps.fork,
+        `Open [\`${normalizedFilePath}\`](../blob/main/${normalizedFilePath}) in your browser (click the link!)`,
         overrides.step2 ||
-          `Add this ${itemType} to the end of the array (before the closing \`]\`)`,
+          `Scroll to the bottom of the file and paste the following ${itemType} just before the closing \`]\`:`,
         overrides.step3 || steps.addComma,
         steps.save,
         `Submit a Pull Request with title: \`${prTitle}\``,
         steps.linkIssue,
-        steps.finalize,
+        steps.waitForReview,
       ];
     },
 
+    /**
+     * Builds the optimized issue body preamble (prepended to all issue types).
+     * §6.2.1 H1 header with unique ID, §6.2.2 no-prerequisites callout,
+     * §6.2.3 difficulty/time badges, §6.2.4 structured metadata.
+     * @param {string} contentTypeLabel - Human-readable type (e.g. "Japan Fact", "Color Theme: Sakura")
+     * @param {number|null} id - Unique issue entry ID, or null for types that use name
+     */
+    buildBodyPreamble(contentTypeLabel, id) {
+      const idStr = id !== undefined && id !== null ? ` #${id}` : '';
+      return [
+        `## 🟢 Good First Issue: Add ${contentTypeLabel}${idStr} — Beginner-Friendly Open Source Contribution`,
+        '',
+        '![Time: <1 minute](https://img.shields.io/badge/Time-<1_minute-brightgreen) ' +
+          '![Difficulty: Beginner](https://img.shields.io/badge/Difficulty-Beginner-blue) ' +
+          '![No Code Required](https://img.shields.io/badge/No_Code-Required-orange)',
+        '',
+        "> 🟢 **No prerequisites needed!** You don't need to clone the repo, install anything, or write code.",
+        '> This entire contribution can be done from your browser in under 60 seconds.',
+        '',
+        '**Labels:** good first issue, help wanted, hacktoberfest  ',
+        '**Language:** JSON (no coding required)  ',
+        '**Time:** < 1 minute  ',
+        '**Skill Level:** Absolute beginner  ',
+        '',
+        '---',
+        '',
+      ].join('\n');
+    },
+
+    buildIssueTitle(emoji, issueType) {
+      return this.common.titleTemplate
+        .replace('{emoji}', String(emoji || ''))
+        .replace('{issueType}', String(issueType));
+    },
+
     theme: {
-      title:
-        '[Good First Issue] {emoji} Add New Color Theme: {name} (good-first-issue)',
+      title: 'Theme: {name}',
       header: '## 🎨 Add New Color Theme: "{name}"',
       category: 'Community Contribution - Theme',
       estimatedTime: '<1 min',
       taskDescription: 'Add this beautiful new theme to KanaDojo!',
       detailsHeader: '### Theme Details',
       vibeLabel: '💡 **Vibe:**',
-      file: 'data/community-content/community-themes.json',
+      file: 'community/content/community-themes.json',
       itemType: 'theme',
       prTitle: 'feat(theme): add {name} theme',
       // Theme has unique step2 and step3
       step2:
-        'Add this new theme to the end of the array (before the closing `]`)',
-      step3: 'Make sure the JSON stays valid and properly formatted',
+        'Scroll to the bottom of the file and paste the following theme object just before the closing `]`:',
+      step3:
+        'Make sure the JSON stays valid (add a comma after the previous last entry if needed)',
     },
     fact: {
-      title:
-        '[Good First Issue] {emoji} Add Interesting, Cultural Fact about Japan {id} (good-first-issue)',
+      title: 'Japan Fact {id}',
       header: '## 🎋 Add New Japan Fact',
       category: 'Community Contribution - Fun Fact',
       estimatedTime: '<1 min',
@@ -269,59 +339,173 @@ module.exports = {
         'Add this interesting fact about Japan to our collection!',
       factHeader: '### The Fact',
       // Use buildInstructions: filePath, itemType, prTitle
-      file: 'data/community-content/japan-facts.json',
+      file: 'community/content/japan-facts.json',
       itemType: 'fact',
       prTitle: 'content: add new japan fact',
     },
     proverb: {
-      title:
-        '[Good First Issue] {emoji} Add New Japanese Proverb {id} (good-first-issue)',
+      title: 'Japanese Proverb {id}',
       header: '## 🎌 Add Japanese Proverb (ことわざ)',
       category: 'Community Contribution - Proverb',
       estimatedTime: '<1 min',
       taskDescription:
         'Add this traditional Japanese proverb to help learners understand Japanese wisdom!',
       proverbHeader: '### The Proverb',
-      file: 'data/community-content/japanese-proverbs.json',
+      file: 'community/content/japanese-proverbs.json',
       itemType: 'proverb object',
       prTitle: 'content: add new japanese proverb',
     },
+    haiku: {
+      title: 'Japanese Haiku {id}',
+      header: '## Add Classic Japanese Haiku',
+      category: 'Community Contribution - Haiku',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this classic Japanese haiku to expand poetic and cultural learning content!',
+      haikuHeader: '### The Haiku',
+      file: 'community/content/japanese-haiku.json',
+      itemType: 'haiku object',
+      prTitle: 'content: add japanese haiku',
+    },
     trivia: {
-      title:
-        '[Good First Issue] {emoji} Add New Trivia Question {id} (good-first-issue)',
+      title: 'Trivia Question {id}',
       header: '## 🧠 Add New Trivia Question',
       category: 'Community Contribution - Trivia',
       estimatedTime: '<1 min',
       taskDescription: 'Add this trivia question to our growing quiz bank!',
       triviaHeader: '### The Trivia Question',
-      // Trivia uses dynamic file path: data/community-content/{difficultyFile}
-      file: 'data/community-content/{difficultyFile}',
+      // Trivia uses dynamic file path: community/content/{difficultyFile}
+      file: 'community/content/{difficultyFile}',
       itemType: 'trivia object',
       prTitle: 'content: add new trivia question',
     },
     grammar: {
-      title:
-        '[Good First Issue] {emoji} Add New Grammar Point {id} (good-first-issue)',
+      title: 'Grammar Point {id}',
       header: '## 📖 Add New Grammar Point',
       category: 'Community Contribution - Grammar',
       estimatedTime: '<1 min',
       taskDescription:
         'Add this grammar explanation to our learner-friendly grammar list!',
       grammarHeader: '### The Grammar Point',
-      file: 'data/community-content/japanese-grammar.json',
+      file: 'community/content/japanese-grammar.json',
       itemType: 'grammar string',
       prTitle: 'content: add new grammar point',
     },
+    idiom: {
+      title: 'Japanese Idiom {id}',
+      header: '## Add New Japanese Idiom',
+      category: 'Community Contribution - Idiom',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this Japanese idiom to help learners recognize natural expressions!',
+      idiomHeader: '### The Idiom',
+      file: 'community/content/japanese-idioms.json',
+      itemType: 'idiom object',
+      prTitle: 'content: add new japanese idiom',
+    },
+    regionalDialect: {
+      title: 'Dialect Entry {id}',
+      header: '## Add New Regional Dialect Entry',
+      category: 'Community Contribution - Regional Dialect',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this regional dialect phrase so learners can understand real-world Japanese variation!',
+      dialectHeader: '### The Dialect Entry',
+      file: 'community/content/japanese-regional-dialects.json',
+      itemType: 'regional dialect object',
+      prTitle: 'content: add new regional dialect entry',
+    },
+    falseFriend: {
+      title: 'False Friend Pair {id}',
+      header: '## Add Japanese False Friend',
+      category: 'Community Contribution - False Friend',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this confusion pair to help learners avoid common Japanese mixups!',
+      falseFriendHeader: '### The False Friend Pair',
+      file: 'community/content/japanese-false-friends.json',
+      itemType: 'false friend object',
+      prTitle: 'content: add new japanese false friend',
+    },
+    culturalEtiquette: {
+      title: 'Etiquette Tip {id}',
+      header: '## Add Japanese Cultural Etiquette Tip',
+      category: 'Community Contribution - Cultural Etiquette',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this etiquette tip to help learners navigate Japanese social situations confidently!',
+      etiquetteHeader: '### The Etiquette Tip',
+      file: 'community/content/japanese-cultural-etiquette.json',
+      itemType: 'cultural etiquette object',
+      prTitle: 'content: add new cultural etiquette tip',
+    },
+    exampleSentence: {
+      title: 'Example Sentence {id}',
+      header: '## Add Japanese Example Sentence',
+      category: 'Community Contribution - Example Sentence',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this Japanese example sentence to improve real-world reading and comprehension!',
+      sentenceHeader: '### The Example Sentence',
+      file: 'community/content/japanese-example-sentences.json',
+      itemType: 'example sentence object',
+      prTitle: 'content: add new example sentence',
+    },
+    commonMistake: {
+      title: 'Learner Mistake {id}',
+      header: '## Add Common Japanese Learner Mistake',
+      category: 'Community Contribution - Common Mistake',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this common learner mistake pair to help others avoid frequent Japanese errors!',
+      mistakeHeader: '### The Common Mistake',
+      file: 'community/content/japanese-common-mistakes.json',
+      itemType: 'common mistake object',
+      prTitle: 'content: add new common mistake',
+    },
+    wallpaperUrl: {
+      title: 'Wallpaper URL #{id}',
+      header: '## Add Wallpaper URL',
+      category: 'Community Contribution - Wallpaper URL',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Paste this realistic-looking wallpaper URL string into our community wallpaper URL list.',
+      urlHeader: '### The Wallpaper URL String',
+      file: 'community/content/community-wallpaper-urls.json',
+      itemType: 'JSON string',
+      prTitle: 'content: add wallpaper url #{id}',
+    },
+    communityNote: {
+      title: 'Community Note Line #{id}',
+      header: '## Add Tiny Community Note Line',
+      category: 'Community Contribution - Community Note',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add one exact markdown line to a low-priority community notes file.',
+      noteHeader: '### The Community Note Edit',
+      prTitle: 'docs: add community note line #{id}',
+    },
+    videoGameQuote: {
+      title: 'Video Game Quote {id}',
+      header: '## Add Famous Japanese Video Game Quote',
+      category: 'Community Contribution - Video Game Quote',
+      estimatedTime: '<1 min',
+      taskDescription:
+        'Add this iconic Japanese game quote so learners can enjoy game culture while studying!',
+      gameQuoteHeader: '### The Video Game Quote',
+      file: 'community/content/japanese-videogame-quotes.json',
+      itemType: 'video game quote object',
+      prTitle: 'content: add video game quote',
+    },
     animeQuote: {
-      title:
-        '[Good First Issue] {emoji} Add Famous Anime Quote {id} (good-first-issue)',
+      title: 'Anime Quote {id}',
       header: '## 🎬 Add Famous Anime Quote',
       category: 'Community Contribution - Anime Quote',
       estimatedTime: '<1 min',
       taskDescription:
         'Add this iconic anime quote so learners can enjoy Japanese pop culture!',
       quoteHeader: '### The Quote',
-      file: 'data/community-content/anime-quotes.json',
+      file: 'community/content/anime-quotes.json',
       itemType: 'anime quote object',
       prTitle: 'content: add anime quote',
     },
